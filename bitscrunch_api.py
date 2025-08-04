@@ -1,5 +1,3 @@
-# bitscrunch_api.py
-
 import requests
 import asyncio
 
