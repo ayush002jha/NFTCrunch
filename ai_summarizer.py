@@ -3,7 +3,7 @@ import json
 
 def generate_report_summary(api_key: str, wallet_data: dict) -> str:
     """
-    Generates a human-readable risk report summary using a more robust prompt.
+    Generates a human-readable risk report using a fine-tuned prompt for standard Markdown.
     """
     if not api_key:
         raise ValueError("Google AI API key is required.")
@@ -14,25 +14,35 @@ def generate_report_summary(api_key: str, wallet_data: dict) -> str:
     data_json_string = json.dumps(wallet_data, indent=2)
 
     prompt = f"""
-    You are "Wallet Guardian called NFTCrunch," an expert AI crypto security analyst.
-    Your task is to analyze the following JSON data for a cryptocurrency wallet and generate a concise, easy-to-understand "Wallet Health & Risk Report".
+    You are "Wallet Guardian," an expert AI crypto security analyst.
+    Analyze the provided JSON data and generate a "Wallet Health & Risk Report".
 
     **CRITICAL INSTRUCTIONS:**
-    1.  **Prioritize High-Risk Factors:** If you see `"aml_is_sanctioned": true`, this is the MOST IMPORTANT finding. Mention it first in the executive summary with a strong warning.
-    2.  **Handle Errors Gracefully:** If any section of the JSON data contains an "error" key (like the 'scores' data might), simply state that "Data for this section could not be retrieved" and move on. Do not mention the technical error details.
-    3.  **Interpret "no_data_found":** If the "data" field for a section (like 'washtrade') contains the string "no_data_found", interpret this positively as "No relevant activity was detected."
+    - Use standard Markdown (V1) for formatting. Use asterisks for bold (*text*) and hyphens for bullet points (- text).
+    - If `"aml_is_sanctioned": true`, it is the most critical finding. Start the executive summary with a strong warning like **WARNING: This wallet is flagged as sanctioned.**
+    - If data for a section is missing or contains an error, state that the information was "unavailable" or "could not be retrieved". Do not mention technical errors.
+    - If wash trade data is "no_data_found", report it as "No relevant wash trading activity was detected."
 
-    **REPORT STRUCTURE:**
-    1.  **Executive Summary:** A single paragraph summarizing the wallet's overall risk profile. Lead with any critical warnings (like sanctions).
-    2.  **Key Risk Factors:** A bulleted list of specific risks. Mention sanction status, AML risk level, and wash trading. If risks are low, state that clearly.
-    3.  **Asset Overview:** Briefly describe the wallet's holdings (NFTs and Tokens). Mention the total number of NFTs and collections from the profile data.
+    **REPORT STRUCTURE & CONTENT:**
+    
+    ***Executive Summary:***
+    A concise paragraph summarizing the wallet's risk profile. Lead with any critical warnings. Mention the overall holdings (NFTs, tokens) and any other significant findings like wash trading.
+
+    ***Key Risk Factors:***
+    A bulleted list.
+    - *Sanctioned:* State clearly if the wallet is flagged as sanctioned.
+    - *AML Risk Level:* Report the AML risk level. If it's just a number, state that "The meaning of this specific level requires additional context".
+    - *Wash Trading:* State whether any wash trading activity was detected.
+
+    ***Asset Overview:***
+    A paragraph summarizing the assets. Use the `nft_count` and `collection_count` from the profile data. Mention the total number of different tokens from the token balance pagination. Note that the actual value of many assets may be unavailable from the provided data.
 
     **Analyze this data:**
     ```json
     {data_json_string}
     ```
 
-    Generate the report in Markdown V2 format. Be direct and clear.
+    Generate only the content for the three sections described above.
     """
 
     try:
@@ -40,4 +50,4 @@ def generate_report_summary(api_key: str, wallet_data: dict) -> str:
         return response.text
     except Exception as e:
         print(f"Error generating AI summary: {e}")
-        return "Could not generate an AI summary at this time."
+        return "An AI-powered summary could not be generated at this time."
