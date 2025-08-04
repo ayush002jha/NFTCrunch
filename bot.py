@@ -20,8 +20,10 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Sends a welcome message."""
     welcome_text = (
         "*Welcome to Wallet Guardian Bot!* 🛡️\n\n"
-        "I provide brief, AI-powered risk reports for any crypto wallet.\n\n"
-        "To start, just send me a wallet address.\n\n"
+        "I am an AI-powered security analyst for your crypto wallets. "
+        "I use bitsCrunch's powerful APIs to provide a comprehensive health and risk report.\n\n"
+        "To get started, simply send me a wallet address, or use the command:\n"
+        "`/check_wallet <your_wallet_address>`\n\n"
         "*Example:*\n"
         "`0xAb5801a7D398351b8bE11C439e05C5B3259aeC9B`"
     )
