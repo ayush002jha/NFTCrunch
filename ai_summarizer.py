@@ -9,7 +9,7 @@ def generate_report_summary(api_key: str, wallet_data: dict) -> str:
         raise ValueError("Google AI API key is required.")
 
     genai.configure(api_key=api_key)
-    model = genai.GenerativeModel('gemini-1.5-flash')
+    model = genai.GenerativeModel('gemini-2.5-flash')
 
     data_json_string = json.dumps(wallet_data, indent=2)
 
