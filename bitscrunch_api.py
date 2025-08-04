@@ -52,13 +52,13 @@ class BitsCrunchAPI:
 
     def get_nft_balance(self, wallet_address: str):
         print(f"Fetching NFT balance for {wallet_address}...")
-        endpoint = "/wallet/balance/nft"
+        endpoint = "/nft/floor_price"
         params = {"wallet": [wallet_address], "blockchain": "ethereum", "limit": 5}
         return self._make_request(endpoint, params=params)
 
     def get_token_balance(self, wallet_address: str):
         print(f"Fetching token balance for {wallet_address}...")
-        endpoint = "/wallet/balance/token"
+        endpoint = "/token/balance"
         params = {"address": wallet_address, "blockchain": "ethereum", "limit": 5}
         return self._make_request(endpoint, params=params)
 

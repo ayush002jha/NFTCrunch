@@ -3,7 +3,7 @@ import json
 
 def generate_report_summary(api_key: str, wallet_data: dict) -> str:
     """
-    Generates a human-readable risk report using a fine-tuned prompt for standard Markdown.
+    Generates a concise, analytical risk report using a "Risk Engine" AI persona.
     """
     if not api_key:
         raise ValueError("Google AI API key is required.")
@@ -14,35 +14,30 @@ def generate_report_summary(api_key: str, wallet_data: dict) -> str:
     data_json_string = json.dumps(wallet_data, indent=2)
 
     prompt = f"""
-    You are "Wallet Guardian," an expert AI crypto security analyst.
-    Analyze the provided JSON data and generate a "Wallet Health & Risk Report".
+    You are a concise AI Wallet Risk Engine. Your sole purpose is to analyze the provided JSON data and produce a brief, scannable risk report.
 
-    **CRITICAL INSTRUCTIONS:**
-    - Use standard Markdown (V1) for formatting. Use asterisks for bold (*text*) and hyphens for bullet points (- text).
-    - If `"aml_is_sanctioned": true`, it is the most critical finding. Start the executive summary with a strong warning like **WARNING: This wallet is flagged as sanctioned.**
-    - If data for a section is missing or contains an error, state that the information was "unavailable" or "could not be retrieved". Do not mention technical errors.
-    - If wash trade data is "no_data_found", report it as "No relevant wash trading activity was detected."
+    **CRITICAL OUTPUT RULES:**
+    1.  Use standard Markdown for formatting (*bold*, _italic_, `code`).
+    2.  Your entire response MUST follow this exact structure:
+        - A single-sentence "Overall Risk Verdict".
+        - A section header: "*Key Findings (6 Points):*".
+        - Exactly six bulleted key points, each starting with an emoji and a bolded title.
+    3.  Analyze the data to provide insights, not just repeat values.
 
-    **REPORT STRUCTURE & CONTENT:**
-    
-    ***Executive Summary:***
-    A concise paragraph summarizing the wallet's risk profile. Lead with any critical warnings. Mention the overall holdings (NFTs, tokens) and any other significant findings like wash trading.
+    **ANALYSIS INSTRUCTIONS FOR KEY POINTS:**
+    - **Sanction Status:** If `aml_is_sanctioned` is true, this is a CRITICAL risk.
+    - **AML Risk:** Use the `aml_risk_level`. A higher number indicates higher risk.
+    - **Holder Profile:** Note if the wallet is a `Whale` or `Shark`, as their activity can influence markets.
+    - **Wash Trading:** Check the `washtrade` section. "no_data_found" means no wash trading was detected.
+    - **Asset Concentration:** Report the `nft_count` and `collection_count` from the profile. High numbers in a single wallet can be a risk factor.
+    - **Potential Profitability:** Use `realized_profit` from the `scores` data. If unavailable, state that.
 
-    ***Key Risk Factors:***
-    A bulleted list.
-    - *Sanctioned:* State clearly if the wallet is flagged as sanctioned.
-    - *AML Risk Level:* Report the AML risk level. If it's just a number, state that "The meaning of this specific level requires additional context".
-    - *Wash Trading:* State whether any wash trading activity was detected.
-
-    ***Asset Overview:***
-    A paragraph summarizing the assets. Use the `nft_count` and `collection_count` from the profile data. Mention the total number of different tokens from the token balance pagination. Note that the actual value of many assets may be unavailable from the provided data.
-
-    **Analyze this data:**
+    **Analyze this JSON data:**
     ```json
     {data_json_string}
     ```
 
-    Generate only the content for the three sections described above.
+    **PRODUCE THE REPORT NOW FOLLOWING ALL RULES.**
     """
 
     try:
